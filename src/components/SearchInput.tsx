@@ -2,21 +2,51 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Sparkles } from "lucide-react";
+import { AIRecommendationService, type Series } from "@/services/aiRecommendations";
+import { useToast } from "@/hooks/use-toast";
 
-export const SearchInput = () => {
+interface SearchInputProps {
+  onResults?: (results: Series[]) => void;
+}
+
+export const SearchInput = ({ onResults }: SearchInputProps) => {
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleSearch = async () => {
     if (!query.trim()) return;
     
     setIsLoading(true);
-    // Simulate AI processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsLoading(false);
     
-    // TODO: Implement actual AI search
-    console.log("Searching for:", query);
+    try {
+      const response = await AIRecommendationService.getRecommendations({
+        query: query.trim()
+      });
+
+      if (response.success && response.recommendations.length > 0) {
+        toast({
+          title: "Recommendations Found!",
+          description: `Found ${response.recommendations.length} matches for "${query}"`,
+        });
+        onResults?.(response.recommendations);
+      } else {
+        toast({
+          title: "No matches found",
+          description: "Try describing what you want differently or use broader terms",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+      toast({
+        title: "Search Error",
+        description: "Failed to get recommendations. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -25,8 +55,12 @@ export const SearchInput = () => {
     }
   };
 
+  const handleExampleClick = (exampleQuery: string) => {
+    setQuery(exampleQuery);
+  };
+
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto space-y-4">
       <div className="relative group">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl blur-lg group-hover:blur-xl transition-all duration-300"></div>
         
@@ -53,7 +87,7 @@ export const SearchInput = () => {
               {isLoading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Finding...</span>
+                  <span>AI Thinking...</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
@@ -70,10 +104,28 @@ export const SearchInput = () => {
         <div className="mt-4 text-center text-sm text-muted-foreground">
           <div className="inline-flex items-center gap-2">
             <Sparkles className="w-4 h-4 animate-pulse" />
-            AI is analyzing your preferences...
+            Gemini AI is analyzing your preferences...
           </div>
         </div>
       )}
+
+      {/* Quick Example Buttons */}
+      <div className="flex flex-wrap justify-center gap-2 text-xs">
+        {[
+          "time travel with emotional depth",
+          "dark fantasy with complex characters", 
+          "romantic comedy workplace setting",
+          "coming-of-age with stunning animation"
+        ].map((example) => (
+          <button
+            key={example}
+            onClick={() => handleExampleClick(example)}
+            className="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
+          >
+            "{example}"
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

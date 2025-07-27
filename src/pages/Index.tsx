@@ -1,6 +1,7 @@
 import { Hero } from "@/components/Hero";
 import { RecommendationCards } from "@/components/RecommendationCards";
 import { Features } from "@/components/Features";
+import { ApiKeyForm } from "@/components/ApiKeyForm";
 
 const Index = () => {
   return (
@@ -8,6 +9,7 @@ const Index = () => {
       <Hero />
       <RecommendationCards />
       <Features />
+      <ApiKeyForm />
     </div>
   );
 };
