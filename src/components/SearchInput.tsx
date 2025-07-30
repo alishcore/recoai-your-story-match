@@ -6,7 +6,7 @@ import { AIRecommendationService, type Series } from "@/services/aiRecommendatio
 import { useToast } from "@/hooks/use-toast";
 
 interface SearchInputProps {
-  onResults?: (results: Series[]) => void;
+  onResults?: (results: Series[], query: string) => void;
 }
 
 export const SearchInput = ({ onResults }: SearchInputProps) => {
@@ -29,7 +29,12 @@ export const SearchInput = ({ onResults }: SearchInputProps) => {
           title: "Recommendations Found!",
           description: `Found ${response.recommendations.length} matches for "${query}"`,
         });
-        onResults?.(response.recommendations);
+        onResults?.(response.recommendations, query.trim());
+        
+        // Save to search history
+        if ((window as any).saveSearchToHistory) {
+          (window as any).saveSearchToHistory(query.trim(), response.recommendations.length);
+        }
       } else {
         toast({
           title: "No matches found",

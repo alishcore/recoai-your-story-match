@@ -1,15 +1,14 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/SearchInput";
-import { SearchResults } from "@/components/SearchResults";
 import { type Series } from "@/services/aiRecommendations";
 
-export const Hero = () => {
-  const [searchResults, setSearchResults] = useState<Series[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+interface HeroProps {
+  onSearchResults?: (results: Series[], query: string) => void;
+}
 
-  const handleSearchResults = (results: Series[]) => {
-    setSearchResults(results);
+export const Hero = ({ onSearchResults }: HeroProps) => {
+  const handleSearchResults = (results: Series[], query: string) => {
+    onSearchResults?.(results, query);
   };
 
   return (
@@ -73,11 +72,6 @@ export const Hero = () => {
           </div>
         </div>
       </section>
-
-      {/* Search Results */}
-      {searchResults.length > 0 && (
-        <SearchResults results={searchResults} query={searchQuery} />
-      )}
     </>
   );
 };

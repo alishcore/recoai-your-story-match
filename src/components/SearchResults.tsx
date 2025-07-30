@@ -92,7 +92,15 @@ export const SearchResults = ({ results, query }: SearchResultsProps) => {
                     <Play className="w-4 h-4 mr-2" />
                     Watch Now
                   </Button>
-                  <Button variant="glass" size="icon">
+                  <Button 
+                    variant="glass" 
+                    size="icon"
+                    onClick={() => {
+                      if ((window as any).addToWatchlist) {
+                        (window as any).addToWatchlist(show);
+                      }
+                    }}
+                  >
                     <BookmarkPlus className="w-4 h-4" />
                   </Button>
                 </div>
