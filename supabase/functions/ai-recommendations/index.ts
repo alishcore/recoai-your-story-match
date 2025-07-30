@@ -162,10 +162,13 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Function started, parsing request...')
     const { query, filters }: RecommendationRequest = await req.json()
+    console.log('Request parsed, query:', query)
     
     // Get Gemini API key from Supabase secrets
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY')
+    console.log('API key found:', !!geminiApiKey)
     if (!geminiApiKey) {
       throw new Error('GEMINI_API_KEY not found in environment variables')
     }
