@@ -157,8 +157,14 @@ async function callGeminiAPI(prompt: string, apiKey: string): Promise<string> {
 }
 
 serve(async (req) => {
+  // Add CORS headers to all responses
+  const headers = {
+    ...corsHeaders,
+    'Content-Type': 'application/json',
+  }
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers })
   }
 
   try {
@@ -170,7 +176,14 @@ serve(async (req) => {
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY')
     console.log('API key found:', !!geminiApiKey)
     if (!geminiApiKey) {
-      throw new Error('GEMINI_API_KEY not found in environment variables')
+      console.error('GEMINI_API_KEY not found in environment variables')
+      return new Response(
+        JSON.stringify({ 
+          error: 'API key not configured. Please contact support.',
+          success: false 
+        }),
+        { status: 500, headers }
+      )
     }
 
     // Create a detailed prompt for Gemini
