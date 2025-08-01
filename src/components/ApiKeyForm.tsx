@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,33 +8,43 @@ import { Eye, EyeOff, Key, ExternalLink } from "lucide-react";
 export const ApiKeyForm = () => {
   const [apiKey, setApiKey] = useState("");
   const [showKey, setShowKey] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isStored, setIsStored] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!apiKey.trim()) return;
+  useEffect(() => {
+    const storedKey = localStorage.getItem('gemini_api_key');
+    if (storedKey) {
+      setApiKey(storedKey);
+      setIsStored(true);
+    }
+  }, []);
 
-    setIsLoading(true);
-    
-    try {
-      // Here you would normally save the API key to Supabase Edge Function Secrets
-      // For now, we'll show a message about how to add it to Supabase
-      
-      toast({
-        title: "API Key Setup Required",
-        description: "Please add your Gemini API key to Supabase Edge Function Secrets with the name 'GEMINI_API_KEY'",
-      });
-      
-    } catch (error) {
+  const handleSave = () => {
+    if (!apiKey.trim()) {
       toast({
         title: "Error",
-        description: "Failed to save API key",
+        description: "Please enter a valid API key",
         variant: "destructive"
       });
-    } finally {
-      setIsLoading(false);
+      return;
     }
+
+    localStorage.setItem('gemini_api_key', apiKey.trim());
+    setIsStored(true);
+    toast({
+      title: "Success",
+      description: "API key saved! You can now use AI recommendations.",
+    });
+  };
+
+  const handleClear = () => {
+    localStorage.removeItem('gemini_api_key');
+    setApiKey('');
+    setIsStored(false);
+    toast({
+      title: "Cleared",
+      description: "API key removed from storage",
+    });
   };
 
   return (
@@ -83,19 +93,27 @@ export const ApiKeyForm = () => {
                 <ExternalLink className="w-3 h-3 ml-1" />
               </Button>
             </p>
-            <p className="text-orange-400">
-              ⚠️ Add this key to Supabase Edge Function Secrets as 'GEMINI_API_KEY' for secure storage
-            </p>
+            {isStored && (
+              <p className="text-green-400">
+                ✅ API key is stored and ready to use
+              </p>
+            )}
           </div>
 
-          <Button 
-            onClick={handleSubmit}
-            disabled={!apiKey.trim() || isLoading}
-            className="w-full"
-            variant="ai"
-          >
-            {isLoading ? "Setting up..." : "Save API Key"}
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleSave}
+              disabled={!apiKey.trim()}
+              className="flex-1"
+            >
+              {isStored ? 'Update' : 'Save'} Key
+            </Button>
+            {isStored && (
+              <Button variant="outline" onClick={handleClear}>
+                Clear
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
