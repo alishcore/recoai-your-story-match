@@ -1,3 +1,6 @@
+// Gemini API Configuration
+const GEMINI_API_KEY = "AIzaSyDQ68CE3uoxd4HT5y2dR4MgZgSvccJHiM8";
+
 import { supabase } from '@/lib/supabase'
 
 export interface Series {
@@ -165,10 +168,8 @@ export class AIRecommendationService {
       console.log('Getting AI recommendations for:', request.query);
       
       // Get API key from localStorage
-      const apiKey = localStorage.getItem('gemini_api_key');
-      if (!apiKey || apiKey.trim() === '') {
-        throw new Error('Please set your Gemini API key first');
-      }
+      // Use the constant API key
+      const apiKey = GEMINI_API_KEY;
 
       // Create a detailed prompt for Gemini
       const prompt = `
