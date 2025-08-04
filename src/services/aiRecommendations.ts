@@ -166,7 +166,7 @@ export class AIRecommendationService {
       
       // Get API key from localStorage
       const apiKey = localStorage.getItem('gemini_api_key');
-      if (!apiKey) {
+      if (!apiKey || apiKey.trim() === '') {
         throw new Error('Please set your Gemini API key first');
       }
 

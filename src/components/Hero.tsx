@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/SearchInput";
+import { AuthButton } from "@/components/AuthButton";
 import { type Series } from "@/services/aiRecommendations";
 
 interface HeroProps {
@@ -14,6 +15,11 @@ export const Hero = ({ onSearchResults }: HeroProps) => {
   return (
     <>
       <section className="relative min-h-screen flex items-center justify-center px-4 py-20">
+        {/* Auth Button */}
+        <div className="absolute top-6 right-6 z-20">
+          <AuthButton />
+        </div>
+        
         {/* Background Effects */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-primary/20 to-accent/20 rounded-full blur-3xl floating"></div>
