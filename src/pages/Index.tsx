@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Hero } from "@/components/Hero";
 import { RecommendationCards } from "@/components/RecommendationCards";
 import { Features } from "@/components/Features";
-
+import { ApiKeyForm } from "@/components/ApiKeyForm";
 import { SearchResults } from "@/components/SearchResults";
 import { SearchHistory } from "@/components/SearchHistory";
 import { Watchlist } from "@/components/Watchlist";
@@ -47,6 +47,8 @@ const Index = () => {
         currentSection={currentSection} 
         onSectionChange={setCurrentSection} 
       />
+      
+      <ApiKeyForm />
     </div>
   );
 };

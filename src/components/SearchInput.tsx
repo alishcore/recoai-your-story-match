@@ -44,11 +44,21 @@ export const SearchInput = ({ onResults }: SearchInputProps) => {
       }
     } catch (error) {
       console.error('Search error:', error);
-      toast({
-        title: "Search Error",
-        description: "Failed to get recommendations. Please try again.",
-        variant: "destructive"
-      });
+      const errorMessage = (error as Error).message;
+      
+      if (errorMessage.includes('API key')) {
+        toast({
+          title: "API Key Required",
+          description: "Please set your Gemini API key in the form below to use AI recommendations.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Search Error",
+          description: "Failed to get recommendations. Please try again.",
+          variant: "destructive"
+        });
+      }
     } finally {
       setIsLoading(false);
     }
