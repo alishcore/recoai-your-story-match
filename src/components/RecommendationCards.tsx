@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, Play, BookmarkPlus, Clock } from "lucide-react";
+import { openTrailer, openStreaming } from "@/utils/trailerUtils";
 
 const mockRecommendations = [
   {
@@ -66,7 +67,11 @@ export const RecommendationCards = () => {
                   <Play className="w-12 h-12 text-white/70" />
                 </div>
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <Button variant="ai" size="sm">
+                  <Button 
+                    variant="ai" 
+                    size="sm"
+                    onClick={() => openTrailer(show.title, show.year)}
+                  >
                     <Play className="w-4 h-4 mr-2" />
                     Watch Trailer
                   </Button>
@@ -114,7 +119,11 @@ export const RecommendationCards = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button variant="ai" className="flex-1">
+                  <Button 
+                    variant="ai" 
+                    className="flex-1"
+                    onClick={() => openStreaming(show.title, show.year)}
+                  >
                     <Play className="w-4 h-4 mr-2" />
                     Watch Now
                   </Button>
