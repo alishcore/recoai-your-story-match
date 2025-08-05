@@ -113,15 +113,26 @@ Important guidelines:
       // Parse Gemini's response
       let analysis;
       try {
-        // Extract JSON from the response (Gemini might wrap it in markdown)
-        const jsonMatch = geminiResponse.match(/\{[\s\S]*\}/);
+        // Clean the response - remove markdown code blocks and extra whitespace
+        let cleanResponse = geminiResponse.trim();
+        
+        // Remove markdown code blocks if present
+        if (cleanResponse.startsWith('```json')) {
+          cleanResponse = cleanResponse.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+        } else if (cleanResponse.startsWith('```')) {
+          cleanResponse = cleanResponse.replace(/^```\s*/, '').replace(/\s*```$/, '');
+        }
+        
+        // Extract JSON from the response
+        const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           analysis = JSON.parse(jsonMatch[0]);
         } else {
-          throw new Error('No JSON found in Gemini response');
+          throw new Error('No JSON found in response');
         }
       } catch (parseError) {
-        console.error('Failed to parse Gemini response:', geminiResponse);
+        console.error('Failed to parse AI response:', geminiResponse);
+        console.error('Parse error:', parseError);
         throw new Error('Failed to parse AI analysis');
       }
 
